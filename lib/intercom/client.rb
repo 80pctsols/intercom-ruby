@@ -2,7 +2,7 @@ module Intercom
   class MisconfiguredClientError < StandardError; end
   class Client
     include Options
-    attr_reader :base_url, :rate_limit_details, :username_part, :password_part, :handle_rate_limit
+    attr_reader :base_url, :rate_limit_details, :username_part, :password_part, :handle_rate_limit, :timeouts
 
     class << self
       def set_base_url(base_url)
@@ -27,6 +27,10 @@ module Intercom
       @base_url = base_url
       @rate_limit_details = {}
       @handle_rate_limit = handle_rate_limit
+      @timeouts = {
+        open_timeout: 30,
+        read_timeout: 90
+      }
     end
 
     def admins
@@ -86,19 +90,19 @@ module Intercom
     end
 
     def get(path, params)
-      execute_request Intercom::Request.get(path, params)
+      execute_request Intercom::Request.get(path, params, **timeouts)
     end
 
     def post(path, payload_hash)
-      execute_request Intercom::Request.post(path, payload_hash)
+      execute_request Intercom::Request.post(path, payload_hash, **timeouts)
     end
 
     def put(path, payload_hash)
-      execute_request Intercom::Request.put(path, payload_hash)
+      execute_request Intercom::Request.put(path, payload_hash, **timeouts)
     end
 
     def delete(path, payload_hash)
-      execute_request Intercom::Request.delete(path, payload_hash)
+      execute_request Intercom::Request.delete(path, payload_hash, **timeouts)
     end
 
     private

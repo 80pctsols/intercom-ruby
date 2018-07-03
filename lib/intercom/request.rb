@@ -21,20 +21,20 @@ module Intercom
       method.basic_auth(CGI.unescape(username), CGI.unescape(secret))
     end
 
-    def self.get(path, params)
-      new(path, Net::HTTP::Get.new(append_query_string_to_url(path, params), default_headers))
+    def self.get(path, params, **request_options)
+      new(path, Net::HTTP::Get.new(append_query_string_to_url(path, params), default_headers), **request_options)
     end
 
-    def self.post(path, form_data)
-      new(path, method_with_body(Net::HTTP::Post, path, form_data))
+    def self.post(path, form_data, **request_options)
+      new(path, method_with_body(Net::HTTP::Post, path, form_data), **request_options)
     end
 
-    def self.delete(path, params)
-      new(path, method_with_body(Net::HTTP::Delete, path, params))
+    def self.delete(path, params, **request_options)
+      new(path, method_with_body(Net::HTTP::Delete, path, params), **request_options)
     end
 
-    def self.put(path, form_data)
-      new(path, method_with_body(Net::HTTP::Put, path, form_data))
+    def self.put(path, form_data, **request_options)
+      new(path, method_with_body(Net::HTTP::Put, path, form_data), **request_options)
     end
 
     def self.method_with_body(http_method, path, params)
