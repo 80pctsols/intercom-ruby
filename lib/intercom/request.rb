@@ -3,12 +3,14 @@ require 'net/https'
 
 module Intercom
   class Request
-    attr_accessor :path, :net_http_method, :rate_limit_details, :handle_rate_limit
+    attr_accessor :path, :net_http_method, :rate_limit_details, :handle_rate_limit, :open_timeout, :read_timeout
 
-    def initialize(path, net_http_method)
+    def initialize(path, net_http_method, open_timeout: 30, read_timeout: 90)
       self.path = path
       self.net_http_method = net_http_method
       self.handle_rate_limit = false
+      self.open_timeout = open_timeout
+      self.read_timeout = read_timeout
     end
 
     def set_common_headers(method, base_uri)
@@ -53,8 +55,8 @@ module Intercom
         net.verify_mode = OpenSSL::SSL::VERIFY_PEER
         net.ca_file = File.join(File.dirname(__FILE__), '../data/cacert.pem')
       end
-      net.read_timeout = 90
-      net.open_timeout = 30
+      net.read_timeout = read_timeout
+      net.open_timeout = open_timeout
       net
     end
 
